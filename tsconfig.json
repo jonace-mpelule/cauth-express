@@ -1,0 +1,32 @@
+{
+	"compilerOptions": {
+		"target": "ES2022",
+		"lib": ["ES2022", "ESNext.AsyncIterable"],
+		"typeRoots": ["./node_modules/@types", "/src/types"],
+		"allowSyntheticDefaultImports": true,
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
+		"allowImportingTsExtensions": true,
+		"forceConsistentCasingInFileNames": true,
+		"types": [ "express"],
+		"moduleResolution": "nodenext",
+		"module": "NodeNext",
+		"pretty": true,
+		"sourceMap": true,
+		"skipLibCheck": true,
+		"outDir": "./build",
+		"allowJs": true,
+		"baseUrl": "./src",
+		"strict": true, 
+		"esModuleInterop": true,
+		"declaration": true,
+		"declarationDir": "dist",
+		"emitDeclarationOnly": true,
+		"noEmit": false,
+		"paths": {
+			"@/*": ["./*"],
+		}
+	},
+	"include": ["./src/**/*"],
+	"exclude": ["node_modules", "tests", "./src/generated/"]
+}
