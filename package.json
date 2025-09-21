@@ -1,6 +1,6 @@
 {
   "name": "@cauth/express",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A lightweight auth module for your daily authentication needs. Bring your own database and provider if and when you have to",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -39,7 +39,6 @@
     "tsdown": "^0.15.1",
     "zod": "^4.1.8"
   },
-
   "devDependencies": {
     "@biomejs/biome": "2.2.4",
     "@prisma/client": "^6.16.2",
