@@ -31,7 +31,7 @@ export function Logout({ config, tokens }: LogoutDeps) {
 				return res.status(401).send({ code: 'invalid-refresh-token' });
 			}
 
-			await config.DbProvider.removeAndAddRefreshToken({
+			await config.dbProvider.removeAndAddRefreshToken({
 				id: payload.id,
 				refreshToken: refreshToken,
 			});

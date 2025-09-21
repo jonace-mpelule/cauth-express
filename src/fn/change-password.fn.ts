@@ -26,7 +26,7 @@ export async function ChangePasswordFn(
 		} as const;
 	}
 
-	const account = await config.DbProvider.findAccountById({
+	const account = await config.dbProvider.findAccountById({
 		id: args.accountId,
 	});
 	if (!account) {
@@ -42,7 +42,7 @@ export async function ChangePasswordFn(
 	}
 
 	const newHash = await bcrypt.hash(args.newPassword, 10);
-	await config.DbProvider.updateAccount({
+	await config.dbProvider.updateAccount({
 		id: account.id,
 		data: { passwordHash: newHash },
 	});

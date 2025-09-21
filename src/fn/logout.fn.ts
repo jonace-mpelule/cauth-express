@@ -30,7 +30,7 @@ export async function LogoutFn(
 		return { success: false, code: 'invalid-refresh-token' } as const;
 	}
 
-	await config.DbProvider.removeAndAddRefreshToken({
+	await config.dbProvider.removeAndAddRefreshToken({
 		id: String(payload.data?.id),
 		refreshToken: args.refreshToken,
 	});

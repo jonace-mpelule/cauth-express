@@ -87,13 +87,13 @@ interface DbProvider {
 //#endregion
 //#region src/types/config.t.d.ts
 declare const ConfigSchema: z$1.ZodObject<{
-  DbProvider: z$1.ZodCustom<DbProvider, DbProvider>;
-  RefreshTokenSecret: z$1.ZodString;
-  AccessTokenSecret: z$1.ZodString;
-  Roles: z$1.ZodArray<z$1.ZodString>;
-  JwtConfig: z$1.ZodOptional<z$1.ZodObject<{
-    AccessTokenLifeSpan: z$1.ZodOptional<z$1.ZodCustom<ms.StringValue, ms.StringValue>>;
-    RefreshTokenLifeSpan: z$1.ZodOptional<z$1.ZodCustom<ms.StringValue, ms.StringValue>>;
+  dbProvider: z$1.ZodCustom<DbProvider, DbProvider>;
+  refreshTokenSecret: z$1.ZodString;
+  accessTokenSecret: z$1.ZodString;
+  roles: z$1.ZodArray<z$1.ZodString>;
+  jwtConfig: z$1.ZodOptional<z$1.ZodObject<{
+    accessTokenLifeSpan: z$1.ZodOptional<z$1.ZodCustom<ms.StringValue, ms.StringValue>>;
+    refreshTokenLifeSpan: z$1.ZodOptional<z$1.ZodCustom<ms.StringValue, ms.StringValue>>;
   }, z$1.z.core.$strip>>;
 }, z$1.z.core.$strip>;
 type Config = z$1.infer<typeof ConfigSchema>;

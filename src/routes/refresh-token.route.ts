@@ -29,7 +29,7 @@ export function Refresh({ config, tokens }: RefreshDeps) {
 			if (!payload)
 				return res.status(401).send({ code: 'invalid-refresh-token' });
 
-			const account = await config.DbProvider.findAccountById({
+			const account = await config.dbProvider.findAccountById({
 				id: payload.id,
 			});
 			if (!account) return res.status(404).send({ code: 'account-not-found' });
@@ -46,7 +46,7 @@ export function Refresh({ config, tokens }: RefreshDeps) {
 			});
 
 			// UPDATE DB WITH NEW REFRESH TOKEN (PUSH & REMOVE OLD)
-			await config.DbProvider.removeAndAddRefreshToken({
+			await config.dbProvider.removeAndAddRefreshToken({
 				id: account.id,
 				refreshToken,
 				newRefreshToken: tokenPair.refreshToken,

@@ -40,7 +40,7 @@ export function ChangePassword({ config, tokens }: ChangePasswordDeps) {
 				return res.status(401).send({ code: 'invalid-access-token' });
 			}
 
-			const account = await config.DbProvider.findAccountById({
+			const account = await config.dbProvider.findAccountById({
 				id: String(payload.data?.id),
 			});
 
@@ -59,7 +59,7 @@ export function ChangePassword({ config, tokens }: ChangePasswordDeps) {
 
 			// HASH & UPDATE NEW PASSWORD
 			const newHash = await bcrypt.hash(out.data.newPassword, 10);
-			await config.DbProvider.updateAccount({
+			await config.dbProvider.updateAccount({
 				id: account.id,
 				data: {
 					passwordHash: newHash,

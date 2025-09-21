@@ -25,17 +25,17 @@ export async function RegisterFn(
 		} as const;
 	}
 
-	const isRoleValid = config.Roles?.includes(args.role);
+	const isRoleValid = config.roles?.includes(args.role);
 
 	if (!isRoleValid) {
 		return {
 			success: false,
 			code: 'invalid-role',
-			message: `role should can only be; ${config.Roles?.map((e) => e)}`,
+			message: `role should can only be; ${config.roles?.map((e) => e)}`,
 		} as const;
 	}
 
-	const existing = await config.DbProvider.findAccountWithCredential({
+	const existing = await config.dbProvider.findAccountWithCredential({
 		email: args.email,
 	});
 	if (existing) {
@@ -44,7 +44,7 @@ export async function RegisterFn(
 
 	const passwordHash = await bcrypt.hash(args.password, 10);
 
-	const account = await config.DbProvider.createAccount({
+	const account = await config.dbProvider.createAccount({
 		data: {
 			email: args.email,
 			phoneNumber: args.phoneNumber,
@@ -57,7 +57,7 @@ export async function RegisterFn(
 		id: account.id,
 		role: account.role,
 	});
-	await config.DbProvider.updateAccountLogin({
+	await config.dbProvider.updateAccountLogin({
 		id: account.id,
 		refreshToken: tokenPair.refreshToken,
 	});

@@ -40,7 +40,7 @@ export function AuthGuard({ config, tokens, roles }: AuthGuardDeps) {
 				});
 			}
 
-			if (!config.Roles.includes(out.data.role)) {
+			if (!config.roles.includes(out.data.role)) {
 				return res.status(403).send({
 					code: 'forbidden-resource',
 					message: "You don't have sufficient permission for this action",

@@ -24,7 +24,7 @@ export function Login({ config, tokens }: loginDeps) {
 
 			const { email, phoneNumber, password } = out.data;
 
-			const account = await config.DbProvider.findAccountWithCredential({
+			const account = await config.dbProvider.findAccountWithCredential({
 				email,
 				phoneNumber,
 			});
@@ -48,7 +48,7 @@ export function Login({ config, tokens }: loginDeps) {
 			});
 
 			// UPDATE ACCOUNT REFRESH TOKENS & LAST LOGIN
-			const updatedAccount = await config.DbProvider.updateAccountLogin({
+			const updatedAccount = await config.dbProvider.updateAccountLogin({
 				id: account.id,
 				refreshToken: tokenPair.refreshToken,
 				select: AuthModelSelect,

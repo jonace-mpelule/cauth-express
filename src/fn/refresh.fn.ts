@@ -29,7 +29,7 @@ export async function RefreshFn(
 		return { success: false, code: 'invalid-refresh-token' } as const;
 	}
 
-	const account = await config.DbProvider.findAccountById({
+	const account = await config.dbProvider.findAccountById({
 		id: String(payload.data?.id),
 	});
 
@@ -45,7 +45,7 @@ export async function RefreshFn(
 		id: account.id,
 		role: account.role,
 	});
-	await config.DbProvider.updateAccountLogin({
+	await config.dbProvider.updateAccountLogin({
 		id: account.id,
 		refreshToken: tokenPair.refreshToken,
 	});

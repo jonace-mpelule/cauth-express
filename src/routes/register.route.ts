@@ -24,17 +24,17 @@ export function Register({ config, tokens }: RegisterDeps) {
 
 			const { email, phoneNumber, role, password } = out.data;
 
-			const isRoleValid = config.Roles?.includes(role);
+			const isRoleValid = config.roles?.includes(role);
 
 			if (!isRoleValid) {
 				return res.status(409).send({
 					code: 'invalid-role',
-					message: `role should can only be; ${config.Roles?.map((e) => e)}`,
+					message: `role should can only be; ${config.roles?.map((e) => e)}`,
 				});
 			}
 
 			// * CHECK IF ACCOUNT EXIST
-			const existing = await config.DbProvider.findAccountWithCredential({
+			const existing = await config.dbProvider.findAccountWithCredential({
 				email,
 				phoneNumber,
 			});
@@ -45,7 +45,7 @@ export function Register({ config, tokens }: RegisterDeps) {
 
 			const passwordHash = await bcrypt.hash(password, 10);
 
-			const account = await config.DbProvider.createAccount({
+			const account = await config.dbProvider.createAccount({
 				data: {
 					email,
 					phoneNumber,
@@ -62,7 +62,7 @@ export function Register({ config, tokens }: RegisterDeps) {
 			});
 
 			// * SAVE THE TOKENS IN DATABASE
-			const updatedAccount = await config.DbProvider.updateAccountLogin({
+			const updatedAccount = await config.dbProvider.updateAccountLogin({
 				id: account.id,
 				refreshToken: tokenPair.refreshToken,
 				select: AuthModelSelect,

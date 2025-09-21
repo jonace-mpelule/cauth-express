@@ -22,7 +22,7 @@ export async function LoginFn(
 		} as const;
 	}
 
-	const account = await config.DbProvider.findAccountWithCredential({
+	const account = await config.dbProvider.findAccountWithCredential({
 		email: args.email,
 		phoneNumber: args.phoneNumber,
 	});
@@ -43,7 +43,7 @@ export async function LoginFn(
 		id: account.id,
 		role: account.role,
 	});
-	await config.DbProvider.updateAccountLogin({
+	await config.dbProvider.updateAccountLogin({
 		id: account.id,
 		refreshToken: tokenPair.refreshToken,
 	});

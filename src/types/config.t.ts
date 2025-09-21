@@ -3,21 +3,21 @@ import z from 'zod';
 import type { DbProvider } from './database.contract.t.ts';
 
 // RUN TIME CHECK FOR DATABASE PROVIDER
-const DbProviderSchema = z.custom<DbProvider>((_) => true, {
+const DbProviderSchema = z.custom<DbProvider>(() => true, {
 	message: 'Invalid DbProvider: must implement DbProvider interface',
 });
 
 const MS = z.custom<ms.StringValue>();
 
 export const ConfigSchema = z.object({
-	DbProvider: DbProviderSchema,
-	RefreshTokenSecret: z.string(),
-	AccessTokenSecret: z.string(),
-	Roles: z.string().array().min(1),
-	JwtConfig: z
+	dbProvider: DbProviderSchema,
+	refreshTokenSecret: z.string(),
+	accessTokenSecret: z.string(),
+	roles: z.string().array().min(1),
+	jwtConfig: z
 		.object({
-			AccessTokenLifeSpan: MS.optional(),
-			RefreshTokenLifeSpan: MS.optional(),
+			accessTokenLifeSpan: MS.optional(),
+			refreshTokenLifeSpan: MS.optional(),
 		})
 		.optional(),
 });

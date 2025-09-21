@@ -14,8 +14,8 @@ type VerificationDeps = {
 export async function GenerateAccessToken({
 	...args
 }: TokenDeps): Promise<string> {
-	const accessToken = jwt.sign(args.payload, args.config.AccessTokenSecret, {
-		expiresIn: args.config.JwtConfig?.AccessTokenLifeSpan ?? '15m',
+	const accessToken = jwt.sign(args.payload, args.config.accessTokenSecret, {
+		expiresIn: args.config.jwtConfig?.accessTokenLifeSpan ?? '15m',
 	});
 	return accessToken;
 }
@@ -23,8 +23,8 @@ export async function GenerateAccessToken({
 export async function GenerateRefreshToken({
 	...args
 }: TokenDeps): Promise<string> {
-	const refreshToken = jwt.sign(args.payload, args.config.RefreshTokenSecret, {
-		expiresIn: args.config.JwtConfig?.RefreshTokenLifeSpan ?? '30d',
+	const refreshToken = jwt.sign(args.payload, args.config.refreshTokenSecret, {
+		expiresIn: args.config.jwtConfig?.refreshTokenLifeSpan ?? '30d',
 	});
 
 	return refreshToken;
@@ -34,12 +34,12 @@ export async function GenerateTokenPairs({ ...args }: TokenDeps): Promise<{
 	accessToken: string;
 	refreshToken: string;
 }> {
-	const accessToken = jwt.sign(args.payload, args.config.AccessTokenSecret, {
-		expiresIn: args.config.JwtConfig?.AccessTokenLifeSpan ?? '15m',
+	const accessToken = jwt.sign(args.payload, args.config.accessTokenSecret, {
+		expiresIn: args.config.jwtConfig?.accessTokenLifeSpan ?? '15m',
 	});
 
-	const refreshToken = jwt.sign(args.payload, args.config.RefreshTokenSecret, {
-		expiresIn: args.config.JwtConfig?.RefreshTokenLifeSpan ?? '30d',
+	const refreshToken = jwt.sign(args.payload, args.config.refreshTokenSecret, {
+		expiresIn: args.config.jwtConfig?.refreshTokenLifeSpan ?? '30d',
 	});
 
 	return { accessToken, refreshToken };
@@ -48,7 +48,7 @@ export async function GenerateTokenPairs({ ...args }: TokenDeps): Promise<{
 export async function VerifyRefreshToken<T>({
 	...args
 }: VerificationDeps): Promise<T | null> {
-	const out = jwt.verify(args.token, args.config.RefreshTokenSecret);
+	const out = jwt.verify(args.token, args.config.refreshTokenSecret);
 
 	if (out instanceof String) return null;
 
@@ -58,7 +58,7 @@ export async function VerifyRefreshToken<T>({
 export async function VerifyAccessToken<T>({
 	...args
 }: VerificationDeps): Promise<T | null> {
-	const out = jwt.verify(args.token, args.config.AccessTokenSecret);
+	const out = jwt.verify(args.token, args.config.accessTokenSecret);
 
 	if (out instanceof String) return null;
 
