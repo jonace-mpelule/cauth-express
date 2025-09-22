@@ -1,15 +1,15 @@
 import bcrypt from 'bcrypt';
-import type { CAuth } from '@/cauth.service.ts';
+import type { _CAuth } from '@/cauth.service.ts';
 import { formatZodIssues } from '@/helpers/zod-joined-issues.ts';
-import type { Config } from '@/types/config.t.ts';
+import type { CAuthOptions } from '@/types/config.t.ts';
 import {
 	RegisterSchema,
 	type RegisterSchemaType,
 } from '@/types/dto-schemas.t.ts';
 
 type RegisterDeps = {
-	config: Config;
-	tokens: CAuth['Tokens'];
+	config: CAuthOptions;
+	tokens: _CAuth<any>['Tokens'];
 };
 
 export async function RegisterFn(

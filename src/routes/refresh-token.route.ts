@@ -1,13 +1,13 @@
 import type { Request, Response } from 'express';
-import type { CAuth } from '@/cauth.service.ts';
+import type { _CAuth } from '@/cauth.service.ts';
 import { formatZodIssues } from '@/helpers/zod-joined-issues.ts';
 import { AuthModelSelect } from '@/types/auth.t.ts';
-import type { Config } from '@/types/config.t.ts';
+import type { CAuthOptions } from '@/types/config.t.ts';
 import { RefreshTokenSchema } from '@/types/dto-schemas.t.ts';
 
 type RefreshDeps = {
-	config: Config;
-	tokens: CAuth['Tokens'];
+	config: CAuthOptions;
+	tokens: _CAuth<any>['Tokens'];
 };
 
 export function Refresh({ config, tokens }: RefreshDeps) {

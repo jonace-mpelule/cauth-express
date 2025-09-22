@@ -1,14 +1,14 @@
 import jwt from 'jsonwebtoken';
-import type { Config } from '@/types/config.t.ts';
+import type { CAuthOptions } from '@/types/config.t.ts';
 
 type TokenDeps = {
 	payload: any;
-	config: Config;
+	config: CAuthOptions;
 };
 
 type VerificationDeps = {
 	token: any;
-	config: Config;
+	config: CAuthOptions;
 };
 
 export async function GenerateAccessToken({

@@ -1,5 +1,5 @@
-import type { CAuth } from '@/cauth.service.ts';
-import type { Config } from '@/types/config.t.ts';
+import type { _CAuth } from '@/cauth.service.ts';
+import type { CAuthOptions } from '@/types/config.t.ts';
 import {
 	RefreshTokenSchema,
 	type RefreshTokenSchemaType,
@@ -7,8 +7,8 @@ import {
 import { tryCatch } from '@/utils/try-catch.ts';
 
 type RefreshDeps = {
-	config: Config;
-	tokens: CAuth['Tokens'];
+	config: CAuthOptions;
+	tokens: _CAuth<any>['Tokens'];
 };
 
 export async function RefreshFn(

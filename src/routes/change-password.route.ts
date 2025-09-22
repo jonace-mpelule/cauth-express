@@ -1,14 +1,14 @@
 import bcrypt from 'bcrypt';
 import type { Request, Response } from 'express';
-import type { CAuth } from '@/cauth.service.ts';
+import type { _CAuth } from '@/cauth.service.ts';
 import { formatZodIssues } from '@/helpers/zod-joined-issues.ts';
-import type { Config } from '@/types/config.t.ts';
+import type { CAuthOptions } from '@/types/config.t.ts';
 import { ChangePasswordSchema } from '@/types/dto-schemas.t.ts';
 import { tryCatch } from '@/utils/try-catch.ts';
 
 type ChangePasswordDeps = {
-	config: Config;
-	tokens: CAuth['Tokens'];
+	config: CAuthOptions;
+	tokens: _CAuth<any>['Tokens'];
 };
 
 export function ChangePassword({ config, tokens }: ChangePasswordDeps) {

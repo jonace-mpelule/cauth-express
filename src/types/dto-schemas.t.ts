@@ -31,30 +31,22 @@ export type LoginSchemaType = z.infer<typeof LoginSchema>;
 
 // * EMAIL REGISTRATION DTO
 
-const EmailRegister = z.object({
-	phoneNumber: z.never().optional(),
-	email: z.email(),
-	role: z.string(),
-	password: z.string(),
-});
-const PhoneRegister = z.object({
-	phoneNumber: phoneWithLibSchema,
-	email: z.never().optional(),
+const Register = z.object({
+	phoneNumber: phoneWithLibSchema.optional(),
+	email: z.email().optional(),
 	role: z.string(),
 	password: z.string(),
 });
 
-export const RegisterSchema = z
-	.union([EmailRegister, PhoneRegister])
-	.superRefine((data, ctx) => {
-		if (data.email && data.phoneNumber) {
-			ctx.addIssue({
-				code: z.ZodIssueCode.custom,
-				message: 'Provide either email or phoneNumber',
-				path: ['email', 'phoneNumber'],
-			});
-		}
-	});
+export const RegisterSchema = Register.superRefine((data, ctx) => {
+	if (!data.email && !data.phoneNumber) {
+		ctx.addIssue({
+			code: z.ZodIssueCode.custom,
+			message: 'Provide either email or phoneNumber',
+			path: ['email', 'phoneNumber'],
+		});
+	}
+});
 
 export type RegisterSchemaType = z.infer<typeof RegisterSchema>;
 

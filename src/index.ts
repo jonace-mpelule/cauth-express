@@ -1,6 +1,6 @@
 // TYPES
 
-export * from 'cauth.service.ts';
+export { CAuth } from 'cauth.service.ts';
 export * from './providers/prisma.provider.ts';
 export * from './types/auth.t.ts';
 export * from './types/config.t.ts';

@@ -9,11 +9,11 @@ const DbProviderSchema = z.custom<DbProvider>(() => true, {
 
 const MS = z.custom<ms.StringValue>();
 
-export const ConfigSchema = z.object({
+export const CAuthOptionsSchema = z.object({
 	dbProvider: DbProviderSchema,
 	refreshTokenSecret: z.string(),
 	accessTokenSecret: z.string(),
-	roles: z.string().array().min(1),
+	roles: z.array(z.string()).min(1),
 	jwtConfig: z
 		.object({
 			accessTokenLifeSpan: MS.optional(),
@@ -22,4 +22,4 @@ export const ConfigSchema = z.object({
 		.optional(),
 });
 
-export type Config = z.infer<typeof ConfigSchema>;
+export type CAuthOptions = z.infer<typeof CAuthOptionsSchema>;

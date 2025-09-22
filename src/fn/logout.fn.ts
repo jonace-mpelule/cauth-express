@@ -1,11 +1,11 @@
-import type { CAuth } from '@/cauth.service.ts';
-import type { Config } from '@/types/config.t.ts';
+import type { _CAuth } from '@/cauth.service.ts';
+import type { CAuthOptions } from '@/types/config.t.ts';
 import { LogoutSchema, type LogoutSchemaType } from '@/types/dto-schemas.t.ts';
 import { tryCatch } from '@/utils/try-catch.ts';
 
 type LogoutDeps = {
-	config: Config;
-	tokens: CAuth['Tokens'];
+	config: CAuthOptions;
+	tokens: _CAuth<any>['Tokens'];
 };
 
 export async function LogoutFn(
