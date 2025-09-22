@@ -296,7 +296,7 @@ declare class _CAuth<T extends string[]> {
     VerifyAccessToken: <T_1>(token: any) => Promise<T_1 | null>;
   };
 }
-declare function CAuth<const T extends string[]>(config: Omit<CAuthOptions, 'roles'> & {
+declare function CAuth<const T extends string[]>(options: Omit<CAuthOptions, 'roles'> & {
   roles: T;
 }): _CAuth<T>;
 declare namespace library_d_exports {
@@ -4179,4 +4179,4 @@ declare class PrismaProvider implements DbProvider {
   }): Promise<any>;
 }
 //#endregion
-export { AuthModel, AuthModelSchema, AuthModelSelect, CAuth, CAuthOptions, CAuthOptionsSchema, type ChangePasswordSchema, type ChangePasswordSchemaType, DbProvider, type LoginSchema, type LoginSchemaType, type LogoutSchema, type LogoutSchemaType, PrismaProvider, type RefreshTokenSchema, type RefreshTokenSchemaType, type RegisterSchema, type RegisterSchemaType, _CAuth };
+export { AuthModel, AuthModelSchema, AuthModelSelect, CAuth, CAuthOptions, CAuthOptionsSchema, type ChangePasswordSchema, type ChangePasswordSchemaType, DbProvider, type LoginSchema, type LoginSchemaType, type LogoutSchema, type LogoutSchemaType, PrismaProvider, type RefreshTokenSchema, type RefreshTokenSchemaType, type RegisterSchema, type RegisterSchemaType };
