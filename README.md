@@ -11,15 +11,16 @@ CAuth (Custom Auth) is a powerful, flexible, and secure authentication library d
 ## ✨ Features
 
 - 🔑 **JWT Token Management** - Access & Refresh token handling
-- 👥 **Role-Based Access Control** - Flexible role management
+- 👥 **Role-Based Access Control** - Flexible role management with type safety
 - 🔄 **Automatic Token Refresh** - Seamless token renewal
-- 📱 **Multi-Provider Support** - Email, Phone Number, or both
+- 📱 **Flexible Authentication** - Email OR Phone Number (login), Email AND/OR Phone (registration)
 - 🛡️ **Security First** - Industry-standard security practices
 - 🎯 **Zero Configuration** - Works out of the box
 - 📦 **Framework Agnostic** - Works with Express, Fastify, and more
 - 🔧 **TypeScript Ready** - Full type safety and IntelliSense
 - 🚀 **Performance Optimized** - Built for production environments
 - 🔐 **2FA Ready** - Two-factor authentication support (coming soon)
+- ⚡ **Function-based API** - Simple, clean API design
 
 ## 🚀 Quick Start
 
@@ -35,6 +36,12 @@ npm install @cauth/express
 # Using yarn
 yarn add @cauth/express
 ```
+
+### Key Features
+
+- 🎯 **Function-based API** - Simple function call instead of class instantiation
+- 📱 **Flexible Registration** - Support for email, phone, or both simultaneously
+- 🔒 **Type-safe Configuration** - Full TypeScript support with compile-time validation
 
 ### Database Schema
 
@@ -57,21 +64,21 @@ model Auth {
 ### Basic Setup
 
 ```typescript
-import CAuth, { PrismaProvider } from '@cauth/express';
+import { CAuth, PrismaProvider } from '@cauth/express';
 import { PrismaClient } from '@prisma/client';
 
 // Initialize your database client
 const prisma = new PrismaClient();
 
 // Create CAuth instance
-const auth = new CAuth({
-  DbProvider: new PrismaProvider(prisma),
-  Roles: ['user', 'admin', 'moderator'],
-  AccessTokenSecret: process.env.ACCESS_TOKEN_SECRET!,
-  RefreshTokenSecret: process.env.REFRESH_TOKEN_SECRET!,
-  JwtConfig: {
-    AccessTokenLifeSpan: '15m',
-    RefreshTokenLifeSpan: '7d',
+const auth = CAuth({
+  dbProvider: new PrismaProvider(prisma),
+  roles: ['user', 'admin', 'moderator'],
+  accessTokenSecret: process.env.ACCESS_TOKEN_SECRET!,
+  refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET!,
+  jwtConfig: {
+    accessTokenLifeSpan: '15m',
+    refreshTokenLifeSpan: '7d',
   },
 });
 
@@ -92,15 +99,17 @@ CAuth follows a modular architecture that separates concerns:
 
 ### 🔧 Configuration
 
+CAuth uses a simple configuration object called `CAuthOptions`:
+
 ```typescript
-interface Config {
-  DbProvider: DbProvider;           // Database provider instance
-  Roles: string[];                  // Available roles in your system
-  AccessTokenSecret: string;        // Secret for access tokens
-  RefreshTokenSecret: string;       // Secret for refresh tokens
-  JwtConfig?: {                     // Optional JWT configuration
-    AccessTokenLifeSpan?: string;   // Default: '15m'
-    RefreshTokenLifeSpan?: string;  // Default: '7d'
+interface CAuthOptions {
+  dbProvider: DbProvider;           // Database provider instance
+  roles: string[];                  // Available roles in your system
+  accessTokenSecret: string;        // Secret for access tokens
+  refreshTokenSecret: string;       // Secret for refresh tokens
+  jwtConfig?: {                     // Optional JWT configuration
+    accessTokenLifeSpan?: string;   // Default: '15m'
+    refreshTokenLifeSpan?: string;  // Default: '7d'
   };
 }
 ```
@@ -203,7 +212,7 @@ const refreshPayload = await auth.Tokens.VerifyRefreshToken<{ id: string }>(
 
 ### Registration
 
-Register a new user with email or phone number:
+Register a new user with email, phone number, or both:
 
 ```typescript
 // Email registration
@@ -219,11 +228,19 @@ await auth.FN.Register({
   password: 'securePassword123',
   role: 'user',
 });
+
+// Both email and phone (recommended for better UX)
+await auth.FN.Register({
+  email: 'user@example.com',
+  phoneNumber: '+1234567890',
+  password: 'securePassword123',
+  role: 'user',
+});
 ```
 
 ### Login
 
-Authenticate users with email or phone:
+Authenticate users with email OR phone (one at a time):
 
 ```typescript
 // Email login
@@ -290,7 +307,7 @@ await auth.FN.Logout({
 
 ### E-commerce Platform
 ```typescript
-// Customer registration
+// Customer registration (supports email, phone, or both)
 app.post('/customers/register', auth.Routes.Register());
 
 // Admin panel protection
@@ -314,8 +331,11 @@ app.use('/admin', auth.Guard(['admin', 'owner']));
 
 ### Mobile App Backend
 ```typescript
-// Phone number authentication
-app.post('/auth/phone-login', auth.Routes.Login());
+// Login with email OR phone
+app.post('/auth/login', auth.Routes.Login());
+
+// Registration with both email and phone for better UX
+app.post('/auth/register', auth.Routes.Register());
 
 // Token refresh for mobile
 app.post('/auth/refresh', auth.Routes.Refresh());
@@ -340,9 +360,11 @@ class CustomDbProvider implements DbProvider {
   // ... implement other required methods
 }
 
-const auth = new CAuth({
-  DbProvider: new CustomDbProvider(),
-  // ... other config
+const auth = CAuth({
+  dbProvider: new CustomDbProvider(),
+  roles: ['user', 'admin'],
+  accessTokenSecret: process.env.ACCESS_TOKEN_SECRET!,
+  refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET!,
 });
 ```
 
@@ -376,14 +398,14 @@ JWT_ACCESS_LIFESPAN=15m
 JWT_REFRESH_LIFESPAN=7d
 
 // auth.config.ts
-const auth = new CAuth({
-  DbProvider: new PrismaProvider(prisma),
-  Roles: process.env.ROLES?.split(',') || ['user', 'admin'],
-  AccessTokenSecret: process.env.ACCESS_TOKEN_SECRET!,
-  RefreshTokenSecret: process.env.REFRESH_TOKEN_SECRET!,
-  JwtConfig: {
-    AccessTokenLifeSpan: process.env.JWT_ACCESS_LIFESPAN,
-    RefreshTokenLifeSpan: process.env.JWT_REFRESH_LIFESPAN,
+const auth = CAuth({
+  dbProvider: new PrismaProvider(prisma),
+  roles: process.env.ROLES?.split(',') || ['user', 'admin'],
+  accessTokenSecret: process.env.ACCESS_TOKEN_SECRET!,
+  refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET!,
+  jwtConfig: {
+    accessTokenLifeSpan: process.env.JWT_ACCESS_LIFESPAN,
+    refreshTokenLifeSpan: process.env.JWT_REFRESH_LIFESPAN,
   },
 });
 ```
@@ -394,9 +416,16 @@ CAuth is designed to be easily testable:
 
 ```typescript
 import { describe, it, expect } from 'vitest';
-import auth from './auth.config';
+import { CAuth } from '@cauth/express';
 
 describe('Authentication', () => {
+  const auth = CAuth({
+    dbProvider: mockDbProvider,
+    roles: ['user', 'admin'],
+    accessTokenSecret: 'test-secret',
+    refreshTokenSecret: 'test-refresh-secret',
+  });
+
   it('should register a new user', async () => {
     const result = await auth.FN.Register({
       email: 'test@example.com',

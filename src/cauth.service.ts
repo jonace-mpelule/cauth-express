@@ -95,7 +95,7 @@ export class _CAuth<T extends string[]> {
 }
 
 export function CAuth<const T extends string[]>(
-	config: Omit<CAuthOptions, 'roles'> & { roles: T },
+	options: Omit<CAuthOptions, 'roles'> & { roles: T },
 ) {
-	return new _CAuth(config);
+	return new _CAuth(options);
 }
