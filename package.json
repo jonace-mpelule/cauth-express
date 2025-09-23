@@ -1,6 +1,6 @@
 {
   "name": "@cauth/express",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "A lightweight auth module for your daily authentication needs. Bring your own database and provider if and when you have to",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
