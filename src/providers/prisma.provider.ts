@@ -35,8 +35,8 @@ export class PrismaProvider implements DbProvider {
 		});
 	}
 
-	async createAccount(data: any) {
-		return await (this.#client as any).auth.create({ data });
+	async createAccount({ ...args }: { data: any; select?: any }) {
+		return await (this.#client as any).auth.create({ data: args.data });
 	}
 
 	async removeAndAddRefreshToken<T>({

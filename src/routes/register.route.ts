@@ -50,7 +50,7 @@ export function Register({ config, tokens }: RegisterDeps) {
 					email,
 					phoneNumber,
 					passwordHash,
-					role,
+					role: role,
 					lastLogin: new Date(),
 				},
 			});

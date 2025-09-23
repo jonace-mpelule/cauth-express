@@ -4147,7 +4147,12 @@ declare class PrismaProvider implements DbProvider {
     phoneNumber?: string;
     select?: any;
   }): Promise<any>;
-  createAccount(data: any): Promise<any>;
+  createAccount({
+    ...args
+  }: {
+    data: any;
+    select?: any;
+  }): Promise<any>;
   removeAndAddRefreshToken<T>({
     id,
     refreshToken,
