@@ -1,11 +1,16 @@
 import bcrypt from 'bcrypt';
 import type { _CAuth } from '@/cauth.service.ts';
+import {
+	DuplicateAccountError,
+	InvalidRoleError,
+} from '@/errors/auth-errors.ts';
 import { formatZodIssues } from '@/helpers/zod-joined-issues.ts';
 import type { CAuthOptions } from '@/types/config.t.ts';
 import {
 	RegisterSchema,
 	type RegisterSchemaType,
 } from '@/types/dto-schemas.t.ts';
+import { err, success } from '@/types/result.t.ts';
 
 type RegisterDeps = {
 	config: CAuthOptions;
@@ -28,18 +33,14 @@ export async function RegisterFn(
 	const isRoleValid = config.roles?.includes(args.role);
 
 	if (!isRoleValid) {
-		return {
-			success: false,
-			code: 'invalid-role',
-			message: `role should can only be; ${config.roles?.map((e) => e)}`,
-		} as const;
+		return err(new InvalidRoleError(config.roles));
 	}
 
 	const existing = await config.dbProvider.findAccountWithCredential({
 		email: args.email,
 	});
 	if (existing) {
-		return { success: false, code: 'account-exists' } as const;
+		return err(new DuplicateAccountError());
 	}
 
 	const passwordHash = await bcrypt.hash(args.password, 10);
@@ -50,6 +51,7 @@ export async function RegisterFn(
 			phoneNumber: args.phoneNumber,
 			passwordHash,
 			roles: args.role,
+			lastLogin: new Date(),
 		},
 	});
 
@@ -62,5 +64,5 @@ export async function RegisterFn(
 		refreshToken: tokenPair.refreshToken,
 	});
 
-	return { success: true, account, tokens: tokenPair } as const;
+	return success({ account, tokens: tokenPair });
 }

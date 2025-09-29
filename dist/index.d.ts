@@ -4,6 +4,12 @@ import ms from "ms";
 
 //#region rolldown:runtime
 //#endregion
+//#region src/errors/auth-errors.d.ts
+declare class InvalidRoleError extends Error {
+  code: string;
+  constructor(roles: string[]);
+}
+//#endregion
 //#region src/types/auth.t.d.ts
 declare const AuthModelSchema: z$1.ZodObject<{
   id: z$1.ZodString;
@@ -186,36 +192,27 @@ declare class _CAuth<T extends string[]> {
     Register: ({
       ...args
     }: RegisterSchemaType) => Promise<{
-      readonly success: false;
-      readonly code: "invalid-role";
-      readonly message: `role should can only be; ${string}`;
-      readonly account?: undefined;
-      readonly tokens?: undefined;
+      success: false;
+      error: InvalidRoleError;
     } | {
-      readonly success: false;
-      readonly code: "account-exists";
-      readonly message?: undefined;
-      readonly account?: undefined;
-      readonly tokens?: undefined;
-    } | {
-      readonly success: true;
-      readonly account: {
-        id: string;
-        phoneNumber: string;
-        email: string;
-        passwordHash: string;
-        role: string;
-        lastLogin: Date;
-        refreshTokens: string[];
-        createdAt: Date;
-        updatedAt: Date;
+      success: true;
+      value: {
+        account: {
+          id: string;
+          phoneNumber: string;
+          email: string;
+          passwordHash: string;
+          role: string;
+          lastLogin: Date;
+          refreshTokens: string[];
+          createdAt: Date;
+          updatedAt: Date;
+        };
+        tokens: {
+          accessToken: string;
+          refreshToken: string;
+        };
       };
-      readonly tokens: {
-        accessToken: string;
-        refreshToken: string;
-      };
-      readonly code?: undefined;
-      readonly message?: undefined;
     }>;
     Logout: ({
       ...args

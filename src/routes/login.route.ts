@@ -30,7 +30,7 @@ export function Login({ config, tokens }: loginDeps) {
 			});
 
 			if (!account) {
-				return res.status(401).send({ code: 'credential-mismatch' });
+				return res.status(409).send({ code: 'credential-mismatch' });
 			}
 
 			const passwordMatch = await bcrypt.compare(
@@ -38,7 +38,7 @@ export function Login({ config, tokens }: loginDeps) {
 				account.passwordHash,
 			);
 			if (!passwordMatch) {
-				return res.status(401).send({ code: 'credential-mismatch' });
+				return res.status(409).send({ code: 'credential-mismatch' });
 			}
 
 			// GENERATE TOKENS
