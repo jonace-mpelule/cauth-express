@@ -4,12 +4,6 @@ import ms from "ms";
 
 //#region rolldown:runtime
 //#endregion
-//#region src/errors/auth-errors.d.ts
-declare class InvalidRoleError extends Error {
-  code: string;
-  constructor(roles: string[]);
-}
-//#endregion
 //#region src/types/auth.t.d.ts
 declare const AuthModelSchema: z$1.ZodObject<{
   id: z$1.ZodString;
@@ -144,8 +138,6 @@ declare class _CAuth<T extends string[]> {
     roles: T;
   });
   get RoleType(): T[number];
-  get roles(): T;
-  isRole(value: string): value is T[number];
   Guard: (roles?: Array<T[number]>) => (req: express0.Request, res: express0.Response, next: express0.NextFunction) => Promise<void | express0.Response<any, Record<string, any>>>;
   Routes: {
     Login: () => (req: express0.Request, res: express0.Response) => Promise<express0.Response<any, Record<string, any>>>;
@@ -158,42 +150,33 @@ declare class _CAuth<T extends string[]> {
     Login: ({
       ...args
     }: LoginSchemaType) => Promise<{
-      readonly success: false;
-      readonly code: "invalid-data-passed";
-      readonly message: Promise<string>;
-      readonly account?: undefined;
-      readonly tokens?: undefined;
+      success: false;
+      error: InvalidDataError;
     } | {
-      readonly success: false;
-      readonly code: "credential-mismatch";
-      readonly message?: undefined;
-      readonly account?: undefined;
-      readonly tokens?: undefined;
-    } | {
-      readonly success: true;
-      readonly account: {
-        id: string;
-        phoneNumber: string;
-        email: string;
-        passwordHash: string;
-        role: string;
-        lastLogin: Date;
-        refreshTokens: string[];
-        createdAt: Date;
-        updatedAt: Date;
+      success: true;
+      value: {
+        account: {
+          id: string;
+          phoneNumber: string;
+          email: string;
+          passwordHash: string;
+          role: string;
+          lastLogin: Date;
+          refreshTokens: string[];
+          createdAt: Date;
+          updatedAt: Date;
+        };
+        tokens: {
+          accessToken: string;
+          refreshToken: string;
+        };
       };
-      readonly tokens: {
-        accessToken: string;
-        refreshToken: string;
-      };
-      readonly code?: undefined;
-      readonly message?: undefined;
     }>;
     Register: ({
       ...args
     }: RegisterSchemaType) => Promise<{
       success: false;
-      error: InvalidRoleError;
+      error: InvalidDataError;
     } | {
       success: true;
       value: {
@@ -217,69 +200,49 @@ declare class _CAuth<T extends string[]> {
     Logout: ({
       ...args
     }: LogoutSchemaType) => Promise<{
-      readonly success: false;
-      readonly code: "invalid-data-passed";
+      success: false;
+      error: InvalidDataError;
     } | {
-      readonly success: false;
-      readonly code: "invalid-refresh-token";
-    } | {
-      readonly success: true;
-      readonly code: "logged-out";
+      success: true;
+      value: {
+        code: string;
+      };
     }>;
     Refresh: ({
       ...args
     }: RefreshTokenSchemaType) => Promise<{
-      readonly success: false;
-      readonly code: "invalid-data-passed";
-      readonly account?: undefined;
-      readonly tokens?: undefined;
+      success: false;
+      error: InvalidDataError;
     } | {
-      readonly success: false;
-      readonly code: "invalid-refresh-token";
-      readonly account?: undefined;
-      readonly tokens?: undefined;
-    } | {
-      readonly success: false;
-      readonly code: "account-not-found";
-      readonly account?: undefined;
-      readonly tokens?: undefined;
-    } | {
-      readonly success: true;
-      readonly account: {
-        id: string;
-        phoneNumber: string;
-        email: string;
-        passwordHash: string;
-        role: string;
-        lastLogin: Date;
-        refreshTokens: string[];
-        createdAt: Date;
-        updatedAt: Date;
+      success: true;
+      value: {
+        account: {
+          id: string;
+          phoneNumber: string;
+          email: string;
+          passwordHash: string;
+          role: string;
+          lastLogin: Date;
+          refreshTokens: string[];
+          createdAt: Date;
+          updatedAt: Date;
+        };
+        tokens: {
+          accessToken: string;
+          refreshToken: string;
+        };
       };
-      readonly tokens: {
-        accessToken: string;
-        refreshToken: string;
-      };
-      readonly code?: undefined;
     }>;
     ChangePassword: ({
       ...args
     }: ChangePasswordSchemaType) => Promise<{
-      readonly success: false;
-      readonly code: "invalid-body";
-      readonly message: Promise<string>;
+      success: false;
+      error: InvalidDataError;
     } | {
-      readonly success: false;
-      readonly code: "account-not-found";
-      readonly message?: undefined;
-    } | {
-      readonly success: false;
-      readonly code: "invalid-credentials";
-      readonly message?: undefined;
-    } | {
-      readonly success: true;
-      readonly code: "password-changed";
-      readonly message?: undefined;
+      success: true;
+      value: {
+        code: string;
+      };
     }>;
   };
   Tokens: {
@@ -296,6 +259,32 @@ declare class _CAuth<T extends string[]> {
 declare function CAuth<const T extends string[]>(options: Omit<CAuthOptions, 'roles'> & {
   roles: T;
 }): _CAuth<T>;
+//#endregion
+//#region src/errors/auth-errors.d.ts
+declare class DuplicateAccountError extends Error {
+  code: string;
+  constructor();
+}
+declare class InvalidRoleError extends Error {
+  code: string;
+  constructor(roles: string[]);
+}
+declare class InvalidDataError extends Error {
+  code: string;
+  constructor(message: string);
+}
+declare class CredentialMismatchError extends Error {
+  code: string;
+  constructor();
+}
+declare class InvalidRefreshTokenError extends Error {
+  code: string;
+  constructor();
+}
+declare class AccountNotFoundError extends Error {
+  code: string;
+  constructor();
+}
 declare namespace library_d_exports {
   export { Action, Aggregate, AllModelsToStringIndex, ApplyOmit, Args, Args_3, BaseDMMF, Call, Cast, ClientArg, ClientArgs, ClientBuiltInProp, ClientOptionDef, ClientOtherOps, Compute, ComputeDeep, Count, DMMF, Debug, Decimal, DecimalJsLike, DefaultArgs, DefaultSelection, DevTypeMapDef, DevTypeMapFnDef, DynamicClientExtensionArgs, DynamicClientExtensionThis, DynamicClientExtensionThisBuiltin, DynamicModelExtensionArgs, DynamicModelExtensionFluentApi, DynamicModelExtensionFnResult, DynamicModelExtensionFnResultBase, DynamicModelExtensionFnResultNull, DynamicModelExtensionOperationFn, DynamicModelExtensionThis, DynamicQueryExtensionArgs, DynamicQueryExtensionCb, DynamicQueryExtensionCbArgs, DynamicQueryExtensionCbArgsArgs, DynamicResultExtensionArgs, DynamicResultExtensionData, DynamicResultExtensionNeeds, EmptyToUnknown, Equals, Exact, ExtendsHook, ExtensionArgs, Extensions, ExtractGlobalOmit, FieldRef$1 as FieldRef, Fn, GetAggregateResult, GetBatchResult, GetCountResult, GetFindResult, GetGroupByResult, GetOmit, GetPayloadResult, GetPayloadResultExtensionKeys, GetPayloadResultExtensionObject, GetPrismaClientConfig, GetResult, GetSelect, ITXClientDenyList, InputJsonArray, InputJsonObject, InputJsonValue, InternalArgs, JsArgs, JsInputValue, JsOutputValue, JsPromise, JsonArray, JsonBatchQuery, JsonConvertible, JsonObject, JsonQuery, JsonValue, MergeExtArgs, Metric, MetricHistogram, MetricHistogramBucket, Metrics, MetricsClient, ModelArg, ModelArgs, ModelKey, ModelQueryOptionsCb, ModelQueryOptionsCbArgs, NameArgs, Narrow, Narrowable, NeverToUnknown, ObjectEnumValue, Omission, Omit_2 as Omit, OmitValue, Operation, OperationPayload, Optional, OptionalFlat$1 as OptionalFlat, OptionalKeys, Or$1 as Or, Param, PatchFlat, Path, Payload, PayloadToResult, Pick_2 as Pick, PrismaClientInitializationError, PrismaClientKnownRequestError, PrismaClientOptions, PrismaClientRustPanicError, PrismaClientUnknownRequestError, PrismaClientValidationError, PrismaPromise, PrivateResultType, Public, QueryOptions, QueryOptionsCb, QueryOptionsCbArgs, RawParameters, RawQueryArgs, RawValue, ReadonlyDeep, Record_2 as Record, RenameAndNestPayloadKeys, RequiredExtensionArgs, RequiredKeys$1 as RequiredKeys, Result, ResultArg, ResultArgs, ResultArgsFieldCompute, ResultFieldDefinition, Result_2, Return, RuntimeDataModel, Select, SelectField, SelectablePayloadFields, Selection_2 as Selection, Sql, SqlDriverAdapterFactory, ToTuple, TypeMapCbDef, TypeMapDef, TypedSql, Types, UnknownTypedSql, UnwrapPayload, UnwrapPromise, UnwrapTuple, RequiredExtensionArgs as UserArgs, Value, createParam, defineDmmfProperty, deserializeJsonResponse, deserializeRawResult, dmmfToRuntimeDataModel, empty, getPrismaClient, getRuntime, isTypedSql, itxClientDenyList, join, makeStrictEnum, makeTypedQueryFactory, objectEnumValues, raw, serializeJsonQuery, skip, sqltag, warnEnvConflicts, warnOnce };
 }
@@ -4181,4 +4170,4 @@ declare class PrismaProvider implements DbProvider {
   }): Promise<any>;
 }
 //#endregion
-export { AuthModel, AuthModelSchema, AuthModelSelect, CAuth, CAuthOptions, CAuthOptionsSchema, type ChangePasswordSchema, type ChangePasswordSchemaType, DbProvider, type LoginSchema, type LoginSchemaType, type LogoutSchema, type LogoutSchemaType, PrismaProvider, type RefreshTokenSchema, type RefreshTokenSchemaType, type RegisterSchema, type RegisterSchemaType };
+export { AccountNotFoundError, AuthModel, AuthModelSchema, AuthModelSelect, CAuth, CAuthOptions, CAuthOptionsSchema, type ChangePasswordSchema, type ChangePasswordSchemaType, CredentialMismatchError, DbProvider, DuplicateAccountError, InvalidDataError, InvalidRefreshTokenError, InvalidRoleError, type LoginSchema, type LoginSchemaType, type LogoutSchema, type LogoutSchemaType, PrismaProvider, type RefreshTokenSchema, type RefreshTokenSchemaType, type RegisterSchema, type RegisterSchemaType };

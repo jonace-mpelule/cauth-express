@@ -43,14 +43,6 @@ export class _CAuth<T extends string[]> {
 		return null as unknown as T[number];
 	}
 
-	get roles() {
-		return this.#config.roles;
-	}
-
-	isRole(value: string): value is T[number] {
-		return this.#config.roles.includes(value as T[number]);
-	}
-
 	public Guard = (roles?: Array<T[number]>) =>
 		AuthGuard({ config: this.#config, tokens: this.Tokens, roles });
 

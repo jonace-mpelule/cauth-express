@@ -1,6 +1,14 @@
 // TYPES
 
 export { CAuth } from 'cauth.service.ts';
+export {
+	AccountNotFoundError,
+	CredentialMismatchError,
+	DuplicateAccountError,
+	InvalidDataError,
+	InvalidRefreshTokenError,
+	InvalidRoleError,
+} from './errors/auth-errors.ts';
 export * from './providers/prisma.provider.ts';
 export * from './types/auth.t.ts';
 export * from './types/config.t.ts';

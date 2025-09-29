@@ -1,9 +1,15 @@
 import type { _CAuth } from '@/cauth.service.ts';
+import {
+	AccountNotFoundError,
+	InvalidDataError,
+	InvalidRefreshTokenError,
+} from '@/errors/auth-errors.ts';
 import type { CAuthOptions } from '@/types/config.t.ts';
 import {
 	RefreshTokenSchema,
 	type RefreshTokenSchemaType,
 } from '@/types/dto-schemas.t.ts';
+import { err, success } from '@/types/result.t.ts';
 import { tryCatch } from '@/utils/try-catch.ts';
 
 type RefreshDeps = {
@@ -18,7 +24,7 @@ export async function RefreshFn(
 	const out = RefreshTokenSchema.safeParse(args);
 
 	if (!out.success) {
-		return { success: false, code: 'invalid-data-passed' } as const;
+		return err(new InvalidDataError('Invalid data passed'));
 	}
 
 	const payload = await tryCatch(
@@ -26,7 +32,7 @@ export async function RefreshFn(
 	);
 
 	if (payload.error) {
-		return { success: false, code: 'invalid-refresh-token' } as const;
+		return err(new InvalidRefreshTokenError());
 	}
 
 	const account = await config.dbProvider.findAccountById({
@@ -34,11 +40,11 @@ export async function RefreshFn(
 	});
 
 	if (!account) {
-		return { success: false, code: 'account-not-found' } as const;
+		return err(new AccountNotFoundError());
 	}
 
 	if (!account.refreshTokens.includes(args.refreshToken)) {
-		return { success: false, code: 'invalid-refresh-token' } as const;
+		return err(new InvalidRefreshTokenError());
 	}
 
 	const tokenPair = await tokens.GenerateTokenPairs({
@@ -50,5 +56,5 @@ export async function RefreshFn(
 		refreshToken: tokenPair.refreshToken,
 	});
 
-	return { success: true, account, tokens: tokenPair } as const;
+	return success({ account, tokens: tokenPair });
 }

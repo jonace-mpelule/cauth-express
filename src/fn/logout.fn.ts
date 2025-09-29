@@ -1,6 +1,11 @@
 import type { _CAuth } from '@/cauth.service.ts';
+import {
+	InvalidDataError,
+	InvalidRefreshTokenError,
+} from '@/errors/auth-errors.ts';
 import type { CAuthOptions } from '@/types/config.t.ts';
 import { LogoutSchema, type LogoutSchemaType } from '@/types/dto-schemas.t.ts';
+import { err, success } from '@/types/result.t.ts';
 import { tryCatch } from '@/utils/try-catch.ts';
 
 type LogoutDeps = {
@@ -15,7 +20,7 @@ export async function LogoutFn(
 	const out = LogoutSchema.safeParse(args);
 
 	if (!out.success) {
-		return { success: false, code: 'invalid-data-passed' } as const;
+		return err(new InvalidDataError('invalid-data-passed'));
 	}
 
 	const payload = await tryCatch(
@@ -23,11 +28,11 @@ export async function LogoutFn(
 	);
 
 	if (payload.error) {
-		return { success: false, code: 'invalid-refresh-token' } as const;
+		return err(new InvalidRefreshTokenError());
 	}
 
 	if (!payload) {
-		return { success: false, code: 'invalid-refresh-token' } as const;
+		return err(new InvalidRefreshTokenError());
 	}
 
 	await config.dbProvider.removeAndAddRefreshToken({
@@ -35,5 +40,5 @@ export async function LogoutFn(
 		refreshToken: args.refreshToken,
 	});
 
-	return { success: true, code: 'logged-out' } as const;
+	return success({ code: 'logged-out' });
 }

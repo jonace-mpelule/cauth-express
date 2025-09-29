@@ -1,8 +1,12 @@
 import bcrypt from 'bcrypt';
 import type { _CAuth } from '@/cauth.service.ts';
-import { formatZodIssues } from '@/helpers/zod-joined-issues.ts';
+import {
+	CredentialMismatchError,
+	InvalidDataError,
+} from '@/errors/auth-errors.ts';
 import type { CAuthOptions } from '@/types/config.t.ts';
 import { LoginSchema, type LoginSchemaType } from '@/types/dto-schemas.t.ts';
+import { err, success } from '@/types/result.t.ts';
 
 type loginDeps = {
 	config: CAuthOptions;
@@ -15,11 +19,7 @@ export async function LoginFn(
 ) {
 	const out = LoginSchema.safeParse(args);
 	if (!out.success) {
-		return {
-			success: false,
-			code: 'invalid-data-passed',
-			message: formatZodIssues(out),
-		} as const;
+		return err(new InvalidDataError('invalid-data-passed'));
 	}
 
 	const account = await config.dbProvider.findAccountWithCredential({
@@ -28,7 +28,7 @@ export async function LoginFn(
 	});
 
 	if (!account) {
-		return { success: false, code: 'credential-mismatch' } as const;
+		return err(new CredentialMismatchError());
 	}
 
 	const passwordMatch = await bcrypt.compare(
@@ -36,7 +36,7 @@ export async function LoginFn(
 		account.passwordHash,
 	);
 	if (!passwordMatch) {
-		return { success: false, code: 'credential-mismatch' } as const;
+		return err(new CredentialMismatchError());
 	}
 
 	const tokenPair = await tokens.GenerateTokenPairs({
@@ -48,5 +48,5 @@ export async function LoginFn(
 		refreshToken: tokenPair.refreshToken,
 	});
 
-	return { success: true, account, tokens: tokenPair } as const;
+	return success({ account, tokens: tokenPair });
 }

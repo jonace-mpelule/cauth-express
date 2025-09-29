@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt';
 import type { _CAuth } from '@/cauth.service.ts';
 import {
 	DuplicateAccountError,
+	InvalidDataError,
 	InvalidRoleError,
 } from '@/errors/auth-errors.ts';
 import { formatZodIssues } from '@/helpers/zod-joined-issues.ts';
@@ -23,11 +24,7 @@ export async function RegisterFn(
 ) {
 	const out = RegisterSchema.safeParse(args);
 	if (!out.success) {
-		throw {
-			success: false,
-			code: 'invalid-data-passed',
-			message: formatZodIssues(out),
-		} as const;
+		return err(new InvalidDataError(await formatZodIssues(out)));
 	}
 
 	const isRoleValid = config.roles?.includes(args.role);

@@ -1,11 +1,17 @@
 import bcrypt from 'bcrypt';
 import type { _CAuth } from '@/cauth.service.ts';
+import {
+	AccountNotFoundError,
+	CredentialMismatchError,
+	InvalidDataError,
+} from '@/errors/auth-errors.ts';
 import { formatZodIssues } from '@/helpers/zod-joined-issues.ts';
 import type { CAuthOptions } from '@/types/config.t.ts';
 import {
 	ChangePasswordSchema,
 	type ChangePasswordSchemaType,
 } from '@/types/dto-schemas.t.ts';
+import { err, success } from '@/types/result.t.ts';
 
 type ChangePasswordDeps = {
 	config: CAuthOptions;
@@ -19,26 +25,24 @@ export async function ChangePasswordFn(
 	const out = ChangePasswordSchema.safeParse(args);
 
 	if (!out.success) {
-		return {
-			success: false,
-			code: 'invalid-body',
-			message: formatZodIssues(out),
-		} as const;
+		return err(new InvalidDataError(await formatZodIssues(out)));
 	}
 
 	const account = await config.dbProvider.findAccountById({
 		id: args.accountId,
 	});
+
 	if (!account) {
-		return { success: false, code: 'account-not-found' } as const;
+		return err(new AccountNotFoundError());
 	}
 
 	const passwordMatch = await bcrypt.compare(
 		args.oldPassword,
 		account.passwordHash,
 	);
+
 	if (!passwordMatch) {
-		return { success: false, code: 'invalid-credentials' } as const;
+		return err(new CredentialMismatchError());
 	}
 
 	const newHash = await bcrypt.hash(args.newPassword, 10);
@@ -47,5 +51,5 @@ export async function ChangePasswordFn(
 		data: { passwordHash: newHash },
 	});
 
-	return { success: true, code: 'password-changed' } as const;
+	return success({ code: 'password-changed' });
 }
