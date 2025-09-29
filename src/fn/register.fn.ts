@@ -38,6 +38,7 @@ export async function RegisterFn(
 
 	const existing = await config.dbProvider.findAccountWithCredential({
 		email: args.email,
+		phoneNumber: args.phoneNumber,
 	});
 	if (existing) {
 		return err(new DuplicateAccountError());
@@ -50,7 +51,7 @@ export async function RegisterFn(
 			email: args.email,
 			phoneNumber: args.phoneNumber,
 			passwordHash,
-			roles: args.role,
+			role: args.role,
 			lastLogin: new Date(),
 		},
 	});
